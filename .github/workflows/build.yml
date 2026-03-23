@@ -124,76 +124,60 @@ jobs:
         shell: bash
 
     runs-on: ubuntu-22.04
-    container:
-      image: archlinux:base-devel
 
     steps:
       - name: Checkout latest
         uses: actions/checkout@v5
         with:
           submodules: 'recursive'
-          # Full history is needed so godot export and any git-describe calls work
           fetch-depth: 0
 
-      - name: Update pacman and install dependencies
+      - name: Build package in Arch Linux container
+        env:
+          VERSION: ${{ github.event.inputs.version-number }}
         run: |
-          pacman -Syu --noconfirm
-          pacman -S --noconfirm git sudo
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/repo" \
+            -e VERSION="$VERSION" \
+            archlinux:base-devel \
+            bash -euo pipefail -c '
+              pacman -Syu --noconfirm
+              pacman -S --noconfirm git sudo
 
-      # makepkg refuses to run as root, so create a build user
-      - name: Create build user
-        run: |
-          useradd -m builder
-          echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-          # Give the build user ownership of the workspace
-          chown -R builder:builder "$GITHUB_WORKSPACE"
+              # makepkg refuses to run as root
+              useradd -m builder
+              echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-      - name: Clone AUR package
-        run: |
-          sudo -u builder git clone https://aur.archlinux.org/babblecalibration.git /home/builder/babblecalibration
-          chown -R builder:builder /home/builder/babblecalibration
+              # Clone the AUR repo to get the PKGBUILD
+              sudo -u builder git clone https://aur.archlinux.org/babblecalibration.git /home/builder/babblecalibration
+              chown -R builder:builder /home/builder/babblecalibration
 
-      - name: Patch PKGBUILD to use local checkout
-        run: |
-          REPO_PATH="$GITHUB_WORKSPACE"
-          PKGBUILD=/home/builder/babblecalibration/PKGBUILD
+              PKGBUILD=/home/builder/babblecalibration/PKGBUILD
 
-          # Replace the git+https source line with a plain local path.
-          # The folder will be named after $pkgname inside $srcdir, matching
-          # what the build() function expects (cd "$pkgname").
-          sudo -u builder sed -i \
-            "s|\"${pkgname}::git+\${url}\.git#tag=\${pkgver}\"|\"babblecalibration::file://${REPO_PATH}\"|" \
-            "$PKGBUILD"
+              # Point source at our bind-mounted checkout instead of a tagged git ref
+              sed -i "s|babblecalibration::git+\${url}\.git#tag=\${pkgver}|babblecalibration::file:///repo|" "$PKGBUILD"
 
-          # Pin pkgver to the workflow input so the package version is consistent
-          # with the rest of the release artifacts (and skip the pkgver() VCS call).
-          if [[ -n "${{ github.event.inputs.version-number }}" ]]; then
-            sudo -u builder sed -i \
-              "s|^pkgver=.*|pkgver=${{ github.event.inputs.version-number }}|" \
-              "$PKGBUILD"
-            # Remove the pkgver() function entirely to avoid it overwriting the above
-            sudo -u builder sed -i \
-              '/^pkgver()/,/^}/d' \
-              "$PKGBUILD"
-          fi
+              # Pin pkgver and remove pkgver() if a version was supplied
+              if [[ -n "${VERSION:-}" ]]; then
+                sed -i "s|^pkgver=.*|pkgver=${VERSION}|" "$PKGBUILD"
+                sed -i "/^pkgver()/,/^}/d" "$PKGBUILD"
+              fi
 
-          echo "--- Patched PKGBUILD ---"
-          cat "$PKGBUILD"
+              echo "--- Patched PKGBUILD ---"
+              cat "$PKGBUILD"
 
-      - name: Run makepkg
-        run: |
-          cd /home/builder/babblecalibration
-          # -s  install missing makedepends
-          # -c  clean up leftover files after build
-          # -f  overwrite existing package file
-          # --noconfirm  non-interactive
-          sudo -u builder makepkg -scf --noconfirm
+              cd /home/builder/babblecalibration
+              sudo -u builder makepkg -scf --noconfirm
+
+              # Copy finished package back to bind-mount for the host to retrieve
+              cp /home/builder/babblecalibration/*.pkg.tar.zst /repo/
+            '
 
       - name: Upload AUR package artifact
         uses: actions/upload-artifact@v4
         with:
           name: aur-pkg
-          path: /home/builder/babblecalibration/*.pkg.tar.zst
+          path: ${{ github.workspace }}/*.pkg.tar.zst
 
   publish-release:
     needs: [build-linux, build-windows-x64]
