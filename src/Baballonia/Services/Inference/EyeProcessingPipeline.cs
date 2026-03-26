@@ -6,7 +6,6 @@ namespace Baballonia.Services.Inference;
 
 public class EyeProcessingPipeline(IEyePipelineEventBus eyePipelineEventBus) : DefaultProcessingPipeline, IDisposable
 {
-    private readonly FastCorruptionDetector.FastCorruptionDetector _fastCorruptionDetector = new();
     private readonly ImageCollector _imageCollector = new();
 
     public bool StabilizeEyes { get; set; } = true;
@@ -15,9 +14,6 @@ public class EyeProcessingPipeline(IEyePipelineEventBus eyePipelineEventBus) : D
     {
         var frame = VideoSource?.GetFrame(ColorType.Gray8);
         if(frame == null)
-            return null;
-
-        if (_fastCorruptionDetector.IsCorrupted(frame).isCorrupted)
             return null;
 
         eyePipelineEventBus.Publish(new EyePipelineEvents.NewFrameEvent(frame));
@@ -112,7 +108,6 @@ public class EyeProcessingPipeline(IEyePipelineEventBus eyePipelineEventBus) : D
         TryDisposeObject(ImageConverter);
         TryDisposeObject(InferenceService);
         TryDisposeObject(Filter);
-        TryDisposeObject(_fastCorruptionDetector);
         TryDisposeObject(_imageCollector);
     }
 

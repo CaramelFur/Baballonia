@@ -17,6 +17,7 @@ namespace Baballonia.Services;
 public class EyePipelineManager
 {
     private readonly ILogger<EyePipelineManager> _logger;
+    private readonly ILoggerFactory _loggerFactory;
     private readonly EyeProcessingPipeline _pipeline;
     private readonly ILocalSettingsService _localSettings;
     private readonly InferenceFactory _inferenceFactory;
@@ -27,9 +28,10 @@ public class EyePipelineManager
 
     public EyePipelineManager(ILogger<EyePipelineManager> logger, EyeProcessingPipeline pipeline,
         ILocalSettingsService localSettings, InferenceFactory inferenceFactory,
-        SingleCameraSourceFactory singleCameraSourceFactory)
+        SingleCameraSourceFactory singleCameraSourceFactory, ILoggerFactory loggerFactory)
     {
         _logger = logger;
+        _loggerFactory = loggerFactory;
         _pipeline = pipeline;
         _localSettings = localSettings;
         _inferenceFactory = inferenceFactory;
@@ -42,7 +44,7 @@ public class EyePipelineManager
     public void InitializePipeline()
     {
         _pipeline.ImageConverter = new MatToFloatTensorConverter();
-        var dualTransformer = new DualImageTransformer();
+        var dualTransformer = new DualImageTransformer(_loggerFactory.CreateLogger<DualImageTransformer>());
         dualTransformer.LeftTransformer.TargetSize = new Size(128, 128);
         dualTransformer.RightTransformer.TargetSize = new Size(128, 128);
         _pipeline.ImageTransformer = dualTransformer;
@@ -50,6 +52,7 @@ public class EyePipelineManager
         _ = LoadInferenceAsync();
         LoadFilter();
         LoadEyeStabilization();
+        LoadEyeFrameRepair();
     }
 
     public async Task LoadInferenceAsync()
@@ -102,6 +105,18 @@ public class EyePipelineManager
     {
         var stabilizeEyes = _localSettings.ReadSetting<bool>("AppSettings_StabilizeEyes", true);
         _pipeline.StabilizeEyes = stabilizeEyes;
+    }
+
+    public void LoadEyeFrameRepair()
+    {
+        if (_pipeline.ImageTransformer is not DualImageTransformer dualImageTransformer)
+            return;
+
+        var enabled = _localSettings.ReadSetting("AppSettings_EyeFrameRepairEnabled", true);
+        var threshold = _localSettings.ReadSetting("AppSettings_EyeFrameRepairThreshold", 0.022669);
+        var maxRepairs = _localSettings.ReadSetting("AppSettings_EyeFrameRepairMaxConsecutiveRepairs", 3);
+
+        dualImageTransformer.SetRepairConfig(enabled, threshold, maxRepairs);
     }
 
     public void SetLeftTransformation(CameraSettings cameraSettings)

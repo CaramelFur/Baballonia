@@ -341,6 +341,42 @@
           IconPath="EyeTrackingRegular"
           SettingToggled="{Binding StabilizeEyes, Mode=TwoWay}" />
 
+      <controls:SettingsToggle
+          Title="{x:Static assets:Resources.Settings_EyeFrameRepair_Header}"
+          Description="{x:Static assets:Resources.Settings_EyeFrameRepair_Description}"
+          IconPath="EyeTrackingRegular"
+          SettingToggled="{Binding EyeFrameRepairEnabled, Mode=TwoWay}" />
+
+      <controls:SettingsBlock
+          Title="{x:Static assets:Resources.Settings_EyeFrameRepairThreshold_Header}"
+          Description="{x:Static assets:Resources.Settings_EyeFrameRepairThreshold_Description}"
+          IconPath="EyeTrackingSettingsRegular">
+        <controls:SettingsBlock.SettingsContent>
+          <NumericUpDown
+              Margin="0,8"
+              FormatString="F6"
+              Increment="0.001"
+              Maximum="1"
+              Minimum="0.001"
+              Value="{Binding EyeFrameRepairThreshold, Mode=TwoWay}" />
+        </controls:SettingsBlock.SettingsContent>
+      </controls:SettingsBlock>
+
+      <controls:SettingsBlock
+          Title="{x:Static assets:Resources.Settings_EyeFrameRepairMaxRepairs_Header}"
+          Description="{x:Static assets:Resources.Settings_EyeFrameRepairMaxRepairs_Description}"
+          IconPath="EyeTrackingSettingsRegular">
+        <controls:SettingsBlock.SettingsContent>
+          <NumericUpDown
+              Margin="0,8"
+              FormatString="F0"
+              Increment="1"
+              Maximum="20"
+              Minimum="1"
+              Value="{Binding EyeFrameRepairMaxConsecutiveRepairs, Mode=TwoWay}" />
+        </controls:SettingsBlock.SettingsContent>
+      </controls:SettingsBlock>
+
       <controls:SettingsBlock
         Title="{x:Static assets:Resources.Settings_LogLevel_Header}"
         Description="{x:Static assets:Resources.Settings_LogLevel_Description}"
