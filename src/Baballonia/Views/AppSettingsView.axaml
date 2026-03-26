@@ -341,6 +341,35 @@
           IconPath="EyeTrackingRegular"
           SettingToggled="{Binding StabilizeEyes, Mode=TwoWay}" />
 
+      <controls:SettingsToggle
+          Title="{x:Static assets:Resources.Settings_EyeCorruptionFilter_Header}"
+          Description="{x:Static assets:Resources.Settings_EyeCorruptionFilter_Description}"
+          IconPath="EyeTrackingRegular"
+          SettingToggled="{Binding EyeCorruptionFilterEnabled, Mode=TwoWay}" />
+
+      <controls:SettingsBlock
+        Title="{x:Static assets:Resources.Settings_EyeCorruptionThreshold_Header}"
+        Description="{x:Static assets:Resources.Settings_EyeCorruptionThreshold_Description}"
+        IconPath="EyeTrackingRegular">
+        <controls:SettingsBlock.SettingsContent>
+          <NumericUpDown
+            VerticalAlignment="Center"
+            Minimum="0.001"
+            Maximum="1.0"
+            Increment="0.001"
+            FormatString="0.000###"
+            Value="{Binding EyeCorruptionThreshold, Mode=TwoWay}"
+            IsEnabled="{Binding EyeCorruptionFilterEnabled}" />
+        </controls:SettingsBlock.SettingsContent>
+      </controls:SettingsBlock>
+
+      <controls:SettingsToggle
+          Title="{x:Static assets:Resources.Settings_EyeCorruptionAdaptive_Header}"
+          Description="{x:Static assets:Resources.Settings_EyeCorruptionAdaptive_Description}"
+          IconPath="EyeTrackingRegular"
+          SettingToggled="{Binding EyeCorruptionAdaptive, Mode=TwoWay}"
+          IsEnabled="{Binding EyeCorruptionFilterEnabled}" />
+
       <controls:SettingsBlock
         Title="{x:Static assets:Resources.Settings_LogLevel_Header}"
         Description="{x:Static assets:Resources.Settings_LogLevel_Description}"

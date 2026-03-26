@@ -1614,6 +1614,60 @@ namespace Baballonia.Assets {
                 return ResourceManager.GetString("Settings_DFR_Header", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Detects corrupted eye frames and substitutes the last good frame.
+        /// </summary>
+        public static string Settings_EyeCorruptionFilter_Description {
+            get {
+                return ResourceManager.GetString("Settings_EyeCorruptionFilter_Description", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Eye Frame Corruption Repair.
+        /// </summary>
+        public static string Settings_EyeCorruptionFilter_Header {
+            get {
+                return ResourceManager.GetString("Settings_EyeCorruptionFilter_Header", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Automatically adjusts the corruption threshold based on recent frames.
+        /// </summary>
+        public static string Settings_EyeCorruptionAdaptive_Description {
+            get {
+                return ResourceManager.GetString("Settings_EyeCorruptionAdaptive_Description", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Adaptive Corruption Threshold.
+        /// </summary>
+        public static string Settings_EyeCorruptionAdaptive_Header {
+            get {
+                return ResourceManager.GetString("Settings_EyeCorruptionAdaptive_Header", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Row-pattern consistency threshold.
+        /// </summary>
+        public static string Settings_EyeCorruptionThreshold_Description {
+            get {
+                return ResourceManager.GetString("Settings_EyeCorruptionThreshold_Description", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Corruption Sensitivity Threshold.
+        /// </summary>
+        public static string Settings_EyeCorruptionThreshold_Header {
+            get {
+                return ResourceManager.GetString("Settings_EyeCorruptionThreshold_Header", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Filter Settings.

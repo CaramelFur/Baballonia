@@ -252,6 +252,24 @@
   <data name="Calibration_Eye_Expressions_Stabilize_Eyes_Description" xml:space="preserve">
     <value>Prevents eyes from looking out in opposite directions, and improves pupil stability.</value>
   </data>
+  <data name="Settings_EyeCorruptionFilter_Header" xml:space="preserve">
+    <value>Eye Frame Corruption Repair</value>
+  </data>
+  <data name="Settings_EyeCorruptionFilter_Description" xml:space="preserve">
+    <value>Detects corrupted eye frames (e.g. wrong scan-line offset) per eye and substitutes the last good frame, preventing momentary eye half-closes.</value>
+  </data>
+  <data name="Settings_EyeCorruptionThreshold_Header" xml:space="preserve">
+    <value>Corruption Sensitivity Threshold</value>
+  </data>
+  <data name="Settings_EyeCorruptionThreshold_Description" xml:space="preserve">
+    <value>Row-pattern consistency threshold. Lower values are more sensitive. Default: 0.022669.</value>
+  </data>
+  <data name="Settings_EyeCorruptionAdaptive_Header" xml:space="preserve">
+    <value>Adaptive Corruption Threshold</value>
+  </data>
+  <data name="Settings_EyeCorruptionAdaptive_Description" xml:space="preserve">
+    <value>Automatically adjusts the corruption threshold based on recent frames, improving accuracy across different camera types.</value>
+  </data>
   <data name="Firmware_Title_Header" xml:space="preserve">
     <value>Firmware</value>
   </data>

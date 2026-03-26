@@ -83,6 +83,18 @@ public partial class AppSettingsViewModel : ViewModelBase
     [property: SavedSetting("AppSettings_StabilizeEyes", true)]
     private bool _stabilizeEyes;
 
+    [ObservableProperty]
+    [property: SavedSetting("AppSettings_EyeCorruptionFilterEnabled", true)]
+    private bool _eyeCorruptionFilterEnabled;
+
+    [ObservableProperty]
+    [property: SavedSetting("AppSettings_EyeCorruptionThreshold", 0.022669)]
+    private double _eyeCorruptionThreshold;
+
+    [ObservableProperty]
+    [property: SavedSetting("AppSettings_EyeCorruptionAdaptive", true)]
+    private bool _eyeCorruptionAdaptive;
+
     [ObservableProperty] private bool _onboardingEnabled;
 
     public string MachineID => _identityService.GetUniqueUserId();
@@ -144,6 +156,13 @@ public partial class AppSettingsViewModel : ViewModelBase
             if (p.PropertyName == nameof(StabilizeEyes))
             {
                 _eyePipelineManager.LoadEyeStabilization();
+            }
+
+            if (p.PropertyName is nameof(EyeCorruptionFilterEnabled)
+                or nameof(EyeCorruptionThreshold)
+                or nameof(EyeCorruptionAdaptive))
+            {
+                _eyePipelineManager.LoadCorruptionFilter();
             }
         };
     }

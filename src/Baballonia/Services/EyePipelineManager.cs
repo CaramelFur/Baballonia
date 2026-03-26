@@ -50,6 +50,7 @@ public class EyePipelineManager
         _ = LoadInferenceAsync();
         LoadFilter();
         LoadEyeStabilization();
+        LoadCorruptionFilter();
     }
 
     public async Task LoadInferenceAsync()
@@ -102,6 +103,18 @@ public class EyePipelineManager
     {
         var stabilizeEyes = _localSettings.ReadSetting<bool>("AppSettings_StabilizeEyes", true);
         _pipeline.StabilizeEyes = stabilizeEyes;
+    }
+
+    public void LoadCorruptionFilter()
+    {
+        var enabled = _localSettings.ReadSetting<bool>("AppSettings_EyeCorruptionFilterEnabled", true);
+        var threshold = _localSettings.ReadSetting<double>("AppSettings_EyeCorruptionThreshold", 0.022669);
+        var adaptive = _localSettings.ReadSetting<bool>("AppSettings_EyeCorruptionAdaptive", true);
+
+        _pipeline.CorruptionFilterEnabled = enabled;
+        _pipeline.CorruptionThreshold = threshold;
+        _pipeline.CorruptionAdaptive = adaptive;
+        _pipeline.ResetDetector();
     }
 
     public void SetLeftTransformation(CameraSettings cameraSettings)
