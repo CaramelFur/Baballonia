@@ -83,6 +83,18 @@ public partial class AppSettingsViewModel : ViewModelBase
     [property: SavedSetting("AppSettings_StabilizeEyes", true)]
     private bool _stabilizeEyes;
 
+    [ObservableProperty]
+    [property: SavedSetting("AppSettings_EyeFrameRepairEnabled", true)]
+    private bool _eyeFrameRepairEnabled;
+
+    [ObservableProperty]
+    [property: SavedSetting("AppSettings_EyeFrameRepairThreshold", 0.022669)]
+    private double _eyeFrameRepairThreshold;
+
+    [ObservableProperty]
+    [property: SavedSetting("AppSettings_EyeFrameRepairMaxConsecutiveRepairs", 3)]
+    private int _eyeFrameRepairMaxConsecutiveRepairs;
+
     [ObservableProperty] private bool _onboardingEnabled;
 
     public string MachineID => _identityService.GetUniqueUserId();
@@ -144,6 +156,13 @@ public partial class AppSettingsViewModel : ViewModelBase
             if (p.PropertyName == nameof(StabilizeEyes))
             {
                 _eyePipelineManager.LoadEyeStabilization();
+            }
+
+            if (p.PropertyName == nameof(EyeFrameRepairEnabled) ||
+                p.PropertyName == nameof(EyeFrameRepairThreshold) ||
+                p.PropertyName == nameof(EyeFrameRepairMaxConsecutiveRepairs))
+            {
+                _eyePipelineManager.LoadEyeFrameRepair();
             }
         };
     }

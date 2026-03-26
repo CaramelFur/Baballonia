@@ -862,6 +862,24 @@ This is usually easy to fix! Just install the “Tracking Loss Fix” firmware b
   <data name="Settings_DFR_Description" xml:space="preserve">
     <value>Enable Pimax4All dynamic foveated rendering for select titles</value>
   </data>
+  <data name="Settings_EyeFrameRepair_Header" xml:space="preserve">
+    <value>Eye Frame Repair</value>
+  </data>
+  <data name="Settings_EyeFrameRepair_Description" xml:space="preserve">
+    <value>Substitute the previous good frame when a corrupted eye frame is detected (per eye)</value>
+  </data>
+  <data name="Settings_EyeFrameRepairThreshold_Header" xml:space="preserve">
+    <value>Eye Frame Repair Threshold</value>
+  </data>
+  <data name="Settings_EyeFrameRepairThreshold_Description" xml:space="preserve">
+    <value>Row-consistency threshold for corruption detection. Lower values are more sensitive</value>
+  </data>
+  <data name="Settings_EyeFrameRepairMaxRepairs_Header" xml:space="preserve">
+    <value>Max Consecutive Repairs</value>
+  </data>
+  <data name="Settings_EyeFrameRepairMaxRepairs_Description" xml:space="preserve">
+    <value>Maximum consecutive repaired frames per eye before forcing a re-baseline (handles headset reconnects)</value>
+  </data>
   <data name="Firmware_Mode_Both" xml:space="preserve">
     <value>Both</value>
   </data>
